@@ -11,6 +11,7 @@
 
     <lineageos.preference.LineageSystemSettingMainSwitchPreference
         android:key="battery_light_enabled"
+        android:defaultValue="true"
         android:title="@string/battery_light_enable_title" />
 
     <PreferenceCategory
@@ -19,11 +20,13 @@
 
         <lineageos.preference.LineageSystemSettingSwitchPreference
             android:key="battery_light_pulse"
+            android:defaultValue="true"
             android:title="@string/battery_low_pulse_title"
             android:dependency="battery_light_enabled" />
 
         <lineageos.preference.LineageSystemSettingSwitchPreference
             android:key="battery_light_full_charge_disabled"
+            android:defaultValue="true"
             android:title="@string/battery_light_full_charge_disabled_title"
             android:dependency="battery_light_enabled" />
 
