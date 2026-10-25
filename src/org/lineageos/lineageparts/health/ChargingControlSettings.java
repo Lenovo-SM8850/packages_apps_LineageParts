@@ -11,6 +11,7 @@ import static lineageos.health.HealthInterface.MODE_MANUAL;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.ArraySet;
 import android.view.Menu;
@@ -95,11 +96,19 @@ public class ChargingControlSettings extends SettingsPreferenceFragment implemen
         refreshValues();
 
         watch(LineageSettings.System.getUriFor(LineageSettings.System.CHARGING_CONTROL_ENABLED));
+        watch(LineageSettings.System.getUriFor(LineageSettings.System.CHARGING_CONTROL_MODE));
+        watch(LineageSettings.System.getUriFor(LineageSettings.System.CHARGING_CONTROL_LIMIT));
     }
 
     @Override
     public void onResume() {
         super.onResume();
+        refreshUi();
+    }
+
+    @Override
+    public void onSettingsChanged(Uri contentUri) {
+        super.onSettingsChanged(contentUri);
         refreshUi();
     }
 
@@ -173,6 +182,7 @@ public class ChargingControlSettings extends SettingsPreferenceFragment implemen
 
         if (mChargingControlLimitPref != null) {
             mChargingControlLimitPref.setVisible(isChargingControlLimitPrefVisible);
+            mChargingControlLimitPref.setValue(mChargingControlLimitPref.getSetting());
         }
     }
 
