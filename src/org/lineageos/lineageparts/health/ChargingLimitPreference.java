@@ -25,6 +25,9 @@ public class ChargingLimitPreference extends SliderPreference
         implements Slider.OnSliderTouchListener {
     private static final String TAG = ChargingLimitPreference.class.getSimpleName();
 
+    private static final int MIN_LIMIT = 70;
+    private static final int MAX_LIMIT = 100;
+
     private Slider mSlider;
 
     private TextView mChargingLimitValue;
@@ -49,12 +52,10 @@ public class ChargingLimitPreference extends SliderPreference
         mSlider.setLabelBehavior(LabelFormatter.LABEL_FLOATING);
         mSlider.setStepSize(1);
         mSlider.setTickVisible(false);
-        mSlider.setValueFrom(70);
-        mSlider.setValueTo(100);
+        mSlider.setValueFrom(MIN_LIMIT);
+        mSlider.setValueTo(MAX_LIMIT);
 
-        int currLimit = getSetting();
-        mSlider.setValue(currLimit);
-        updateValue(currLimit);
+        setValue(getSetting());
     }
 
     @Override
@@ -71,7 +72,7 @@ public class ChargingLimitPreference extends SliderPreference
 
     public void setValue(final int value) {
         if (mSlider != null) {
-            mSlider.setValue(value);
+            mSlider.setValue(Math.max(MIN_LIMIT, Math.min(MAX_LIMIT, value)));
         }
         updateValue(value);
     }
@@ -85,9 +86,8 @@ public class ChargingLimitPreference extends SliderPreference
     }
 
     private void updateValue(final int value) {
-        if (value > 0 && mChargingLimitValue != null) {
-            mChargingLimitValue.setText(
-                    getContext().getString(R.string.charging_control_limit_summary, value));
+        if (mChargingLimitValue != null) {
+            mChargingLimitValue.setText(getContext().getString(R.string.charging_control_limit_summary, value));
         }
     }
 }
