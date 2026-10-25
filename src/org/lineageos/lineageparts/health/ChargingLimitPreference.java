@@ -6,6 +6,7 @@
 package org.lineageos.lineageparts.health;
 
 import android.content.Context;
+import android.provider.Settings;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.TextView;
@@ -24,6 +25,9 @@ import org.lineageos.lineageparts.R;
 public class ChargingLimitPreference extends SliderPreference
         implements Slider.OnSliderTouchListener {
     private static final String TAG = ChargingLimitPreference.class.getSimpleName();
+
+    static final String BYPASS_CHARGE_ENABLED = "bypass_charge_enabled";
+    static final String GAMING_MODE_ACTIVE = "ax_gaming_mode_active";
 
     private static final int MIN_LIMIT = 70;
     private static final int MAX_LIMIT = 100;
@@ -64,6 +68,10 @@ public class ChargingLimitPreference extends SliderPreference
 
     @Override
     public void onStopTrackingTouch(final Slider slider) {
+        if (isBypassActive()) {
+            setValue(getSetting());
+            return;
+        }
         final int newLimit = (int) slider.getValue();
 
         setSetting(newLimit);
@@ -71,8 +79,11 @@ public class ChargingLimitPreference extends SliderPreference
     }
 
     public void setValue(final int value) {
+        final boolean bypassActive = isBypassActive();
+        setEnabled(!bypassActive);
         if (mSlider != null) {
             mSlider.setValue(Math.max(MIN_LIMIT, Math.min(MAX_LIMIT, value)));
+            mSlider.setEnabled(isEnabled());
         }
         updateValue(value);
     }
@@ -85,9 +96,20 @@ public class ChargingLimitPreference extends SliderPreference
         mHealthInterface.setLimit(chargingLimit);
     }
 
+    private boolean isBypassActive() {
+        return Settings.System.getInt(getContext().getContentResolver(),
+                BYPASS_CHARGE_ENABLED, 0) == 1
+                && Settings.Secure.getInt(getContext().getContentResolver(),
+                        GAMING_MODE_ACTIVE, 0) == 1
+                && mHealthInterface.getEnabled()
+                && mHealthInterface.getMode() == HealthInterface.MODE_LIMIT;
+    }
+
     private void updateValue(final int value) {
         if (mChargingLimitValue != null) {
-            mChargingLimitValue.setText(getContext().getString(R.string.charging_control_limit_summary, value));
+            mChargingLimitValue.setText(getContext().getString(isBypassActive()
+                    ? R.string.charging_control_limit_bypass_summary
+                    : R.string.charging_control_limit_summary, value));
         }
     }
 }

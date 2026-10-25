@@ -13,6 +13,7 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.util.ArraySet;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -98,6 +99,8 @@ public class ChargingControlSettings extends SettingsPreferenceFragment implemen
         watch(LineageSettings.System.getUriFor(LineageSettings.System.CHARGING_CONTROL_ENABLED));
         watch(LineageSettings.System.getUriFor(LineageSettings.System.CHARGING_CONTROL_MODE));
         watch(LineageSettings.System.getUriFor(LineageSettings.System.CHARGING_CONTROL_LIMIT));
+        watch(Settings.System.getUriFor(ChargingLimitPreference.BYPASS_CHARGE_ENABLED));
+        watch(Settings.Secure.getUriFor(ChargingLimitPreference.GAMING_MODE_ACTIVE));
     }
 
     @Override
