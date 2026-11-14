@@ -29,8 +29,9 @@ public class ChargingLimitPreference extends SliderPreference
     static final String BYPASS_CHARGE_ENABLED = "bypass_charge_enabled";
     static final String GAMING_MODE_ACTIVE = "ax_gaming_mode_active";
 
-    private static final int MIN_LIMIT = 70;
     private static final int MAX_LIMIT = 100;
+
+    private final int mMinLimit;
 
     private Slider mSlider;
 
@@ -42,6 +43,8 @@ public class ChargingLimitPreference extends SliderPreference
         super(context, attrs);
 
         mHealthInterface = HealthInterface.getInstance(context);
+        mMinLimit = context.getResources().getInteger(
+                org.lineageos.platform.internal.R.integer.config_chargingControlLimitMin);
     }
 
     @Override
@@ -56,7 +59,7 @@ public class ChargingLimitPreference extends SliderPreference
         mSlider.setLabelBehavior(LabelFormatter.LABEL_FLOATING);
         mSlider.setStepSize(1);
         mSlider.setTickVisible(false);
-        mSlider.setValueFrom(MIN_LIMIT);
+        mSlider.setValueFrom(mMinLimit);
         mSlider.setValueTo(MAX_LIMIT);
 
         setValue(getSetting());
@@ -82,7 +85,7 @@ public class ChargingLimitPreference extends SliderPreference
         final boolean bypassActive = isBypassActive();
         setEnabled(!bypassActive);
         if (mSlider != null) {
-            mSlider.setValue(Math.max(MIN_LIMIT, Math.min(MAX_LIMIT, value)));
+            mSlider.setValue(Math.max(mMinLimit, Math.min(MAX_LIMIT, value)));
             mSlider.setEnabled(isEnabled());
         }
         updateValue(value);
